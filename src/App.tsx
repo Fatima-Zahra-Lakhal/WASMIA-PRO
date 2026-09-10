@@ -1,39 +1,18 @@
 import { useState, useEffect, useRef } from "react";
+import type { ReactNode, FormEvent } from "react";
 import heroTruck from "@/imports/background.png";
 import emailjs from "@emailjs/browser";
-// ─── Intersection Observer hook ──────────────────────────────────────────────
-function useReveal() {
-  const ref = useRef<HTMLElement>(null);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) el.classList.add("visible"); },
-      { threshold: 0.12 }
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, []);
-  return ref;
-}
 
-// ─── Counter animation hook ───────────────────────────────────────────────────
-function useCounter(target: number, duration = 2000, start = false) {
-  const [value, setValue] = useState(0);
-  useEffect(() => {
-    if (!start) return;
-    const step = target / (duration / 16);
-    let current = 0;
-    const timer = setInterval(() => {
-      current = Math.min(current + step, target);
-      setValue(Math.floor(current));
-      if (current >= target) clearInterval(timer);
-    }, 16);
-    return () => clearInterval(timer);
-  }, [target, duration, start]);
-  return value;
-}
-
+// Photos fournies pour illustrer les activités / moyens de l'entreprise
+import Pose_de_canalisations from "@/imports/Pose_de_canalisations.jpeg";
+import Pose_de_buses from "@/imports/Pose_de_buses.jpeg";
+import Pose_de_conduite from "@/imports/Pose_de_conduite.jpeg";
+import Camion_Plateau from "@/imports/Camion_Plateau.jpeg";
+import Camion_Benne_Howo from "@/imports/Camion_Benne_Howo.jpeg";
+import Chantier_Terrassement from "@/imports/Chantier_Terrassement.jpeg";
+import Pose_de_paves from "@/imports/Pose_de_paves.jpeg";
+import Travaux_voirie from "@/imports/Travaux_voirie.jpeg";
+import Pose_asphalte from "@/imports/Pose_asphalte.jpeg";
 // ─── SVG Icons ────────────────────────────────────────────────────────────────
 const IconShield = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-7 h-7">
@@ -131,45 +110,107 @@ const IconCrane = () => (
     <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v18M3 7l9-4 9 4M3 7v4l9 4 9-4V7M9 21h6"/>
   </svg>
 );
-const IconStar = () => (
-  <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 text-yellow-400">
-    <path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
-  </svg>
-);
 
-// ─── Fleet Section with tabs ──────────────────────────────────────────────────
+// ─── Fleet / activities section ───────────────────────────────────────────────
+// Les photos ci-dessous sont celles fournies dans le projet.
+// Aucune caractéristique technique (tonnage, capacité, année, quantité, etc.)
+// n'est inventée sans information officielle de l'entreprise.
 const FLEET_DATA = {
   transport: [
-    { img: "https://images.unsplash.com/photo-1592838064575-70ed626d3a0e?w=800&h=500&fit=crop&auto=format", alt: "Semi-remorque sur route", model: "Semi-Remorque XL", spec1: ["Charge max.", "24 t"], spec2: ["Volume", "82 m³"], spec3: ["Portée", "Nationale"], badge: "Bestseller" },
-    { img: "https://images.unsplash.com/photo-1616432043562-3671ea2e5242?w=800&h=500&fit=crop&auto=format", alt: "Camion plateau lourd", model: "Plateau Lourd", spec1: ["Charge max.", "30 t"], spec2: ["Volume", "Plateau ouvert"], spec3: ["Portée", "Nationale"], badge: null },
-    { img: "https://images.unsplash.com/photo-1695222833131-54ee679ae8e5?w=800&h=500&fit=crop&auto=format", alt: "Camion porteur standard", model: "Porteur Standard", spec1: ["Charge max.", "8 t"], spec2: ["Volume", "28 m³"], spec3: ["Portée", "Distribution locale"], badge: null },
-    { img: "https://images.unsplash.com/photo-1591768793355-74d04bb6608f?w=800&h=500&fit=crop&auto=format", alt: "Camion citerne", model: "Citerne Inox", spec1: ["Capacité", "20 000 L"], spec2: ["Type", "Liquides alimentaires"], spec3: ["Portée", "Nationale"], badge: null },
-    { img: "https://images.unsplash.com/photo-1565793298595-6a879b1d9492?w=800&h=500&fit=crop&auto=format", alt: "Camion benne", model: "Camion-Benne TP", spec1: ["Charge max.", "18 t"], spec2: ["Benne", "10 m³"], spec3: ["Usage", "Travaux publics"], badge: "TP" },
-    { img: "https://images.unsplash.com/photo-1759234675463-986edc8c5506?w=800&h=500&fit=crop&auto=format", alt: "Camion long-courrier", model: "Long-Courrier Int'l", spec1: ["Charge max.", "26 t"], spec2: ["Volume", "90 m³"], spec3: ["Portée", "Europe / Afrique"], badge: "International" },
+    {
+      img: Camion_Plateau,
+      alt: "Camion à plateau utilisé pour le transport de marchandises et de matériel",
+      model: "Camion plateau",
+      category: "Transport routier",
+      description: "Transport de marchandises et de matériel."
+    },
+    {
+      img: Camion_Benne_Howo,
+      alt: "Camion-benne blanc sur chantier",
+      model: "Camion-benne",
+      category: "Transport & chantier",
+      description: "Transport de matériaux et interventions sur chantier."
+    },
+    {
+      img: Chantier_Terrassement,
+      alt: "Camion et engin sur un chantier de terrassement",
+      model: "Transport sur chantier",
+      category: "Travaux & transport",
+      description: "Appui au transport des matériaux dans le cadre des travaux."
+    }
   ],
-  engins: [
-    { img: "https://images.unsplash.com/photo-1503708928676-1cb796a0891e?w=800&h=500&fit=crop&auto=format", alt: "Pelle mécanique sur chantier", model: "Pelle Hydraulique", spec1: ["Godet", "0,9 m³"], spec2: ["Portée", "9,5 m"], spec3: ["Usage", "Terrassement"], badge: "Bestseller" },
-    { img: "https://images.unsplash.com/photo-1575281923032-f40d94ef6160?w=800&h=500&fit=crop&auto=format", alt: "Excavatrice et camion benne", model: "Excavatrice XL", spec1: ["Godet", "1,5 m³"], spec2: ["Portée", "12 m"], spec3: ["Usage", "Grands chantiers"], badge: null },
-    { img: "https://images.unsplash.com/photo-1603814929877-d5d927322656?w=800&h=500&fit=crop&auto=format", alt: "Bulldozer sur chantier", model: "Bulldozer D6", spec1: ["Puissance", "215 ch"], spec2: ["Lame", "3,4 m"], spec3: ["Usage", "Déblai & remblai"], badge: null },
-    { img: "https://images.unsplash.com/photo-1583024011792-b165975b52f5?w=800&h=500&fit=crop&auto=format", alt: "Pelle sur pneus", model: "Pelle sur Pneus", spec1: ["Godet", "0,6 m³"], spec2: ["Mobilité", "Haute"], spec3: ["Usage", "Milieu urbain"], badge: null },
-    { img: "https://images.unsplash.com/photo-1610477865545-37711c53144d?w=800&h=500&fit=crop&auto=format", alt: "Engins voirie assainissement", model: "Compacteur Tandem", spec1: ["Poids", "8 t"], spec2: ["Largeur", "1,68 m"], spec3: ["Usage", "Voirie & bitume"], badge: null },
-    { img: "https://images.unsplash.com/photo-1495036019936-220b29b930ea?w=800&h=500&fit=crop&auto=format", alt: "Grue de chantier", model: "Chargeuse sur Pneus", spec1: ["Charge", "3,5 t"], spec2: ["Godet", "2,1 m³"], spec3: ["Usage", "Chargement / manutention"], badge: null },
+  travauxPublics: [
+    {
+      img: Pose_de_paves,
+      alt: "Pose de pavés sur un chantier",
+      model: "Pose de pavés",
+      category: "Travaux publics",
+      description: "Aménagement et travaux de voirie."
+    },
+    {
+      img: Travaux_voirie,
+      alt: "Travaux de voirie sur chantier",
+      model: "Travaux de voirie",
+      category: "Voirie",
+      description: "Travaux d'aménagement et d'entretien de voirie."
+    },
+    {
+      img: Pose_asphalte,
+      alt: "Pose d'asphalte sur une route",
+      model: "Pose d'asphalte",
+      category: "Voirie",
+      description: "Travaux de revêtement et d'aménagement routier."
+    }
   ],
+  voirieAssainissement: [
+    {
+      img: Pose_de_canalisations,
+      alt: "Pose de canalisations sur un chantier",
+      model: "Pose de canalisations",
+      category: "Assainissement",
+      description: "Travaux de réseaux et de canalisations."
+    },
+    {
+      img: Pose_de_buses,
+      alt: "Pose de buses en béton sur un chantier",
+      model: "Pose de buses",
+      category: "Assainissement",
+      description: "Travaux de réseaux et ouvrages d'assainissement."
+    },
+    {
+      img: Pose_de_conduite,
+      alt: "Pose d'une conduite dans une tranchée",
+      model: "Pose de conduites",
+      category: "Réseaux",
+      description: "Installation de conduites et réseaux."
+    }
+  ]
 };
 
+type FleetTab = keyof typeof FLEET_DATA;
+
 function FleetSection() {
-  const [tab, setTab] = useState<"transport" | "engins">("transport");
+  const [tab, setTab] = useState<FleetTab>("transport");
   const vehicles = FLEET_DATA[tab];
+
   return (
     <div>
-      {/* Tabs */}
       <div className="flex justify-center mb-10">
-        <div className="inline-flex bg-[#0B3A68]/30 border border-white/10 rounded-full p-1.5 gap-1">
-          {([["transport", "🚛  Camions de transport"], ["engins", "🏗️  Engins de chantier"]] as const).map(([key, label]) => (
+        <div className="flex flex-wrap justify-center bg-[#0B3A68]/30 border border-white/10 rounded-2xl p-1.5 gap-1">
+          {([
+            ["transport", "🚛 Transport"],
+            ["travauxPublics", "🚧 Travaux publics"],
+            ["voirieAssainissement", "🛣️ Voirie & Assainissement"]
+          ] as const).map(([key, label]) => (
             <button
               key={key}
+              type="button"
               onClick={() => setTab(key)}
-              className={`px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 ${tab === key ? "bg-[#E7A62B] text-[#071A2F] shadow-lg" : "text-white/50 hover:text-white"}`}
+              className={`px-5 py-3 rounded-xl text-sm font-semibold transition-all duration-300 ${
+                tab === key
+                  ? "bg-[#E7A62B] text-[#071A2F] shadow-lg"
+                  : "text-white/55 hover:text-white hover:bg-white/5"
+              }`}
               style={{ fontFamily: "Outfit, sans-serif" }}
             >
               {label}
@@ -177,39 +218,53 @@ function FleetSection() {
           ))}
         </div>
       </div>
+
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {vehicles.map((v, i) => (
-          <div key={`${tab}-${i}`} className="section-reveal card-hover group rounded-2xl overflow-hidden border border-white/8 bg-[#0B3A68]/15" style={{ transitionDelay: `${i * 60}ms` }}>
-            <div className="relative h-48 overflow-hidden bg-[#0B3A68]/30">
-              <img src={v.img} alt={v.alt} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#060F1E]/60 to-transparent" />
-              {v.badge && (
-                <div className="absolute top-3 right-3 bg-[#E7A62B] text-[#071A2F] text-xs font-bold px-3 py-1 rounded-full" style={{ fontFamily: "Outfit, sans-serif" }}>{v.badge}</div>
-              )}
+        {vehicles.map((v) => (
+          <article
+            key={`${tab}-${v.model}`}
+            className="card-hover group rounded-2xl overflow-hidden border border-white/8 bg-[#0B3A68]/15"
+          >
+            <div className="relative h-64 overflow-hidden bg-[#0B3A68]/30">
+              <img
+                src={v.img}
+                alt={v.alt}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                loading="lazy"
+                onError={(e) => {
+                  console.error("Image impossible à charger :", e.currentTarget.src);
+                }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#060F1E]/80 via-[#060F1E]/10 to-transparent pointer-events-none" />
+              <div className="absolute top-4 left-4 bg-[#071A2F]/80 backdrop-blur-sm border border-white/10 text-[#E7A62B] text-xs font-bold px-3 py-1.5 rounded-full">
+                {v.category}
+              </div>
+              <div className="absolute bottom-0 left-0 right-0 p-5">
+                <h3 className="text-xl font-bold text-white" style={{ fontFamily: "Outfit, sans-serif" }}>
+                  {v.model}
+                </h3>
+              </div>
             </div>
+
             <div className="p-6">
-              <h3 className="text-lg font-bold text-white mb-4" style={{ fontFamily: "Outfit, sans-serif" }}>{v.model}</h3>
-              <div className="space-y-2">
-                {[v.spec1, v.spec2, v.spec3].map(([label, val]) => (
-                  <div key={label} className="flex justify-between text-sm">
-                    <span className="text-white/40">{label}</span>
-                    <span className="text-white font-medium">{val}</span>
-                  </div>
-                ))}
-              </div>
-              <div className="mt-5 pt-4 border-t border-white/8 flex items-center gap-2 text-[#E7A62B] text-sm font-medium opacity-60 group-hover:opacity-100 transition-opacity cursor-pointer">
-                Demander une disponibilité <IconArrow />
+              <p className="text-white/50 text-sm leading-relaxed">{v.description}</p>
+              <div className="mt-5 pt-4 border-t border-white/8 flex items-center gap-2 text-[#E7A62B] text-sm font-medium">
+                Disponible selon le besoin du projet <IconArrow />
               </div>
             </div>
-          </div>
+          </article>
         ))}
       </div>
+
+      <p className="text-center text-white/35 text-xs mt-8">
+        Les caractéristiques techniques et la disponibilité des équipements sont communiquées sur demande.
+      </p>
     </div>
   );
 }
 
 // ─── Service Card ─────────────────────────────────────────────────────────────
-function ServiceCard({ svc }: { svc: { icon: React.ReactNode; title: string; desc: string; tag: string | null; delay: number; points: string[] } }) {
+function ServiceCard({ svc }: { svc: { icon: ReactNode; title: string; desc: string; tag: string | null; delay: number; points: string[] } }) {
   return (
     <div
       className="section-reveal card-hover border border-white/8 rounded-2xl p-7 bg-[#0B3A68]/20 relative overflow-hidden group cursor-default flex flex-col"
@@ -271,32 +326,14 @@ const Logo = ({ size = "md" }: { size?: "sm" | "md" | "lg" }) => {
   );
 };
 
-// ─── Stat Card (with counter) ─────────────────────────────────────────────────
-function StatCard({ value, suffix, label, delay, started }: { value: number; suffix: string; label: string; delay: number; started: boolean }) {
-  const count = useCounter(value, 1800, started);
-  return (
-    <div
-      className="section-reveal bg-white rounded-2xl p-8 text-center shadow-xl border border-gray-100 card-hover"
-      style={{ transitionDelay: `${delay}ms` }}
-    >
-      <div style={{ fontFamily: "Outfit, sans-serif", fontSize: 52, fontWeight: 800, color: "#071A2F", lineHeight: 1 }}>
-        {count}{suffix}
-      </div>
-      <div className="mt-3 text-sm font-medium text-gray-500 uppercase tracking-widest">{label}</div>
-    </div>
-  );
-}
-
 // ─── Main App ─────────────────────────────────────────────────────────────────
 export default function App() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("accueil");
-  const [statsStarted, setStatsStarted] = useState(false);
   const [formData, setFormData] = useState({ name: "", email: "", phone: "", subject: "", message: "" });
   const [formSent, setFormSent] = useState(false);
 
-  const statsRef = useRef<HTMLDivElement>(null);
 
   // Sticky header
   useEffect(() => {
@@ -304,7 +341,7 @@ export default function App() {
       setScrolled(window.scrollY > 60);
       // Active section detection
       const sections = ["accueil", "apropos", "services", "flotte", "contact"];
-      for (const id of sections.reverse()) {
+      for (const id of [...sections].reverse()) {
         const el = document.getElementById(id);
         if (el && window.scrollY >= el.offsetTop - 100) {
           setActiveSection(id);
@@ -316,14 +353,6 @@ export default function App() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Stats counter trigger
-  useEffect(() => {
-    const el = statsRef.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) setStatsStarted(true); }, { threshold: 0.3 });
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, []);
 
   // Section reveals
   useEffect(() => {
@@ -344,7 +373,7 @@ export default function App() {
     { label: "Contact", href: "#contact", id: "contact" },
   ];
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
   e.preventDefault();
 
   try {
@@ -494,11 +523,13 @@ export default function App() {
 
               {/* Badge */}
               <div
-                className="inline-flex items-center gap-2 bg-[#E7A62B]/15 border border-[#E7A62B]/30 rounded-full px-4 py-1.5 mb-7 animate-fade-up"
+                className="inline-flex items-center gap-2 bg-[#E7A62B]/15 border border-[#E7A62B]/30 rounded-full px-6 py-1.5 mb-7 animate-fade-up"
                 style={{ fontFamily: "Outfit, sans-serif", fontSize: 11, fontWeight: 700, letterSpacing: 2.5 }}
               >
                 <span className="w-1.5 h-1.5 rounded-full bg-[#E7A62B] animate-pulse inline-block" />
-                <span className="text-[#E7A62B] uppercase tracking-widest">Transport &amp; Logistique</span>
+          <span className="text-[#E7A62B] uppercase tracking-widest">
+  Construction · Travaux publics · Voirie &amp; assainissement · Transport de marchandises
+</span>
               </div>
 
               {/* Main heading */}
@@ -546,11 +577,13 @@ export default function App() {
 
               {/* Trust micro row */}
               <div className="flex flex-wrap items-center gap-6 animate-fade-up delay-400">
-                <div className="flex gap-0.5">{[...Array(5)].map((_, i) => <IconStar key={i} />)}</div>
-                <span className="text-white/40 text-sm">200+ clients satisfaits au Maroc</span>
+                <div className="flex items-center gap-2 text-white/50 text-sm">
+                  <IconCheckCircle />
+                  <span>Solutions adaptées aux besoins des projets</span>
+                </div>
                 <div className="hidden sm:flex items-center gap-2 text-white/40 text-sm">
                   <span className="w-1 h-1 rounded-full bg-[#E7A62B]/60 inline-block" />
-                  Livraison garantie 98,7%
+                  Transport, construction & travaux
                 </div>
               </div>
             </div>
@@ -565,10 +598,10 @@ export default function App() {
               style={{ background: "rgba(7,26,47,0.85)", backdropFilter: "blur(16px)", border: "1px solid rgba(255,255,255,0.07)", borderBottom: "none" }}
             >
               {[
-                { icon: <IconShield />, title: "Sécurité garantie", desc: "Marchandises sécurisées à 100%." },
-                { icon: <IconClock />, title: "Livraison à temps", desc: "Respect des délais, toujours." },
-                { icon: <IconMapPin />, title: "Couverture nationale", desc: "Partout au Maroc et au-delà." },
-                { icon: <IconHeadphones />, title: "Support 24/7", desc: "Équipe disponible 24h/24, 7j/7." },
+                { icon: <IconShield />, title: "Fiabilité", desc: "Une approche orientée qualité et sérieux." },
+                { icon: <IconClock />, title: "Organisation", desc: "Des solutions adaptées aux contraintes du projet." },
+                { icon: <IconMapPin />, title: "Implantation à Témara", desc: "Une entreprise marocaine basée à Témara." },
+                { icon: <IconHeadphones />, title: "À votre écoute", desc: "Échangeons sur votre besoin et votre projet." },
               ].map((item, i) => (
                 <div
                   key={i}
@@ -610,18 +643,15 @@ export default function App() {
                 <span className="text-[#E7A62B]">construire demain.</span>
               </h2>
               <p className="text-gray-500 text-base leading-relaxed mb-6">
-                WASMIA-PRO est une entreprise marocaine multi-activités intervenant dans les travaux de construction,
-                les travaux publics, la voirie et l'assainissement, le transport routier de fret et la location
-                d'engins de chantier. Fondée sur les valeurs de fiabilité, de rigueur et d'excellence opérationnelle,
-                nous accompagnons nos clients sur l'ensemble du territoire marocain.
+                WASMIA-PRO est une entreprise marocaine basée à Témara, active notamment dans les travaux divers et de construction ainsi que dans le transport de marchandises pour compte d'autrui.
+                Son activité comprend également des opérations liées aux matériaux et équipements nécessaires aux travaux de bâtiment.
               </p>
               <p className="text-gray-500 text-base leading-relaxed mb-8">
-                Notre parc d'engins et de véhicules modernes, combiné à des équipes de professionnels expérimentés,
-                nous permet de répondre à des projets de toute envergure — du chantier de proximité aux grands
-                projets d'infrastructure — dans les meilleurs délais et selon les normes en vigueur.
+                L'entreprise intervient dans plusieurs domaines liés au bâtiment, aux travaux, à la voirie et au transport.
+                Cette diversité permet de proposer des solutions adaptées aux besoins des projets et des chantiers.
               </p>
               <div className="flex flex-wrap gap-3 mb-8">
-                {["Certifié ISO 9001", "Parc GPS tracké", "Assurance tous risques"].map((t) => (
+                {["Entreprise basée à Témara", "Travaux de construction", "Transport de marchandises"].map((t) => (
                   <div key={t} className="flex items-center gap-2 bg-[#E7A62B]/10 text-[#071A2F] rounded-full px-4 py-1.5 text-sm font-medium">
                     <span className="text-[#E7A62B]"><IconCheckCircle /></span> {t}
                   </div>
@@ -637,10 +667,22 @@ export default function App() {
             </div>
 
             {/* Right: stats */}
-            <div ref={statsRef} className="grid grid-cols-1 gap-6">
-              <StatCard value={150} suffix="+" label="Camions modernes" delay={0} started={statsStarted} />
-              <StatCard value={200} suffix="+" label="Clients satisfaits" delay={150} started={statsStarted} />
-              <StatCard value={25} suffix="+" label="Villes desservies" delay={300} started={statsStarted} />
+            <div className="grid grid-cols-1 gap-6">
+              <div className="bg-white rounded-2xl p-8 shadow-xl border border-gray-100 card-hover">
+                <div className="text-[#E7A62B] text-xs font-bold uppercase tracking-widest mb-2" style={{ fontFamily: "Outfit, sans-serif" }}>Implantation</div>
+                <div className="text-[#071A2F] text-2xl font-extrabold" style={{ fontFamily: "Outfit, sans-serif" }}>Témara — Maroc</div>
+                <p className="text-gray-500 text-sm mt-2">Lot Kasbah N° 146, Témara.</p>
+              </div>
+              <div className="bg-white rounded-2xl p-8 shadow-xl border border-gray-100 card-hover">
+                <div className="text-[#E7A62B] text-xs font-bold uppercase tracking-widest mb-2" style={{ fontFamily: "Outfit, sans-serif" }}>Activité</div>
+                <div className="text-[#071A2F] text-2xl font-extrabold" style={{ fontFamily: "Outfit, sans-serif" }}>Construction & Transport</div>
+                <p className="text-gray-500 text-sm mt-2">Travaux divers, construction et transport de marchandises.</p>
+              </div>
+              <div className="bg-white rounded-2xl p-8 shadow-xl border border-gray-100 card-hover">
+                <div className="text-[#E7A62B] text-xs font-bold uppercase tracking-widest mb-2" style={{ fontFamily: "Outfit, sans-serif" }}>Positionnement</div>
+                <div className="text-[#071A2F] text-2xl font-extrabold" style={{ fontFamily: "Outfit, sans-serif" }}>Multi-activités</div>
+                <p className="text-gray-500 text-sm mt-2">Des activités complémentaires autour du bâtiment, du transport et des travaux.</p>
+              </div>
             </div>
           </div>
         </div>
@@ -707,18 +749,18 @@ export default function App() {
               {
                 icon: <IconTruck />,
                 title: "Transport Routier de Fret",
-                desc: "Transport de marchandises sur l'ensemble du territoire marocain et vers l'international avec suivi GPS en temps réel.",
+                desc: "Transport de marchandises pour compte d'autrui, adapté aux besoins des clients et des projets.",
                 tag: "Cœur de métier",
                 delay: 300,
-                points: ["Fret national & international", "Suivi GPS temps réel", "Assurance tous risques"],
+                points: ["Transport de marchandises", "Solutions adaptées aux besoins", "Organisation selon le projet"],
               },
               {
                 icon: <IconCrane />,
                 title: "Location d'Engins de Chantier",
-                desc: "Mise à disposition de pelles mécaniques, bulldozers, grues, camions-bennes et compacteurs avec ou sans opérateur qualifié.",
+                desc: "Solutions de mise à disposition de matériels et engins nécessaires aux travaux et chantiers, selon les besoins du projet.",
                 tag: null,
                 delay: 400,
-                points: ["Pelles & bulldozers", "Grues & nacelles", "Camions-bennes & compacteurs"],
+                points: ["Matériel de chantier", "Engins selon disponibilité", "Solutions adaptées au chantier"],
               },
             ].map((svc, i) => (
               <ServiceCard key={i} svc={svc} />
@@ -776,10 +818,10 @@ export default function App() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
               { num: "01", title: "Expertise multi-métiers", desc: "Construction, TP, voirie, assainissement, transport et location d'engins : un seul interlocuteur pour tous vos besoins.", icon: <IconCheckCircle /> },
-              { num: "02", title: "Matériel de pointe", desc: "Parc de véhicules et d'engins récents, entretenus rigoureusement, disponibles rapidement sur chantier.", icon: <IconCrane /> },
-              { num: "03", title: "Réactivité 24/7", desc: "Intervention rapide sous 24h, équipes mobiles et support disponible à toute heure pour les urgences.", icon: <IconClock /> },
-              { num: "04", title: "Équipes qualifiées", desc: "Ingénieurs, techniciens, conducteurs d'engins et chauffeurs certifiés avec des années d'expérience terrain.", icon: <IconHeadphones /> },
-              { num: "05", title: "Suivi & transparence", desc: "Reporting chantier régulier, suivi GPS des camions et portail client dédié pour une visibilité totale.", icon: <IconMapPin /> },
+              { num: "02", title: "Moyens adaptés", desc: "Des véhicules, matériels et équipements présentés selon les besoins des travaux et du transport.", icon: <IconCrane /> },
+              { num: "03", title: "Organisation", desc: "Une approche orientée vers la préparation, la coordination et le bon déroulement des missions.", icon: <IconClock /> },
+              { num: "04", title: "Polyvalence", desc: "Des activités complémentaires dans la construction, les travaux et le transport de marchandises.", icon: <IconHeadphones /> },
+              { num: "05", title: "Écoute client", desc: "Une prise en compte des contraintes du projet pour proposer une solution cohérente et adaptée.", icon: <IconMapPin /> },
               { num: "06", title: "Solutions sur mesure", desc: "Devis personnalisé, flexibilité contractuelle et accompagnement de A à Z pour chaque projet.", icon: <IconSettings /> },
             ].map((item, i) => (
               <div key={i} className="section-reveal card-hover group relative border border-white/10 rounded-2xl p-7 bg-[#071A2F]/30 backdrop-blur-sm" style={{ transitionDelay: `${i * 70}ms` }}>
@@ -816,45 +858,38 @@ export default function App() {
           <div className="grid md:grid-cols-3 gap-7">
             {[
               {
-                img: "https://images.unsplash.com/photo-1726866672851-5b99c837603c?w=600&h=380&fit=crop&auto=format",
-                cat: "Flotte",
-                date: "15 Août 2026",
-                title: "WASMIA-PRO renouvelle 30 camions de sa flotte avec des modèles Euro 6",
-                excerpt: "Dans le cadre de notre stratégie de développement durable, nous avons investi dans 30 nouveaux véhicules conformes aux normes Euro 6.",
+                img: Pose_de_paves,
+                cat: "Travaux",
+                title: "Travaux de voirie et d'aménagement",
+                excerpt: "Découvrez quelques exemples de travaux illustrant les domaines d'intervention de WASMIA-PRO."
               },
               {
-                img: "https://images.unsplash.com/photo-1779419226072-3c21c89a8d9d?w=600&h=380&fit=crop&auto=format",
-                cat: "Expansion",
-                date: "3 Juillet 2026",
-                title: "Ouverture d'une nouvelle plateforme logistique à Casablanca",
-                excerpt: "WASMIA-PRO renforce sa présence dans la métropole avec un hub de 5 000 m² pour optimiser les flux de marchandises.",
+                img: Camion_Plateau,
+                cat: "Transport",
+                title: "Transport de marchandises",
+                excerpt: "WASMIA-PRO intervient dans le transport de marchandises pour compte d'autrui, selon les besoins des clients."
               },
               {
-                img: "https://images.unsplash.com/photo-1759826350352-c5b0b77729bd?w=600&h=380&fit=crop&auto=format",
-                cat: "Certification",
-                date: "20 Juin 2026",
-                title: "WASMIA-PRO obtient la certification ISO 9001:2015 pour la qualité de ses services",
-                excerpt: "Une reconnaissance internationale de notre engagement envers l'excellence et la satisfaction client.",
-              },
+                img: Pose_de_canalisations,
+                cat: "Réseaux",
+                title: "Voirie & assainissement",
+                excerpt: "Pose de canalisations, conduites et buses dans le cadre de travaux de réseaux et d'assainissement."
+              }
             ].map((article, i) => (
-              <div key={i} className="section-reveal card-hover bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 group cursor-pointer" style={{ transitionDelay: `${i * 100}ms` }}>
+              <article key={i} className="section-reveal card-hover bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 group">
                 <div className="relative h-52 overflow-hidden bg-gray-100">
-                  <img src={article.img} alt={article.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                  <img src={article.img} alt={article.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy" />
                   <div className="absolute top-3 left-3 bg-[#E7A62B] text-[#071A2F] text-xs font-bold px-3 py-1 rounded-full" style={{ fontFamily: "Outfit, sans-serif" }}>
                     {article.cat}
                   </div>
                 </div>
                 <div className="p-6">
-                  <div className="text-gray-400 text-xs mb-3 font-medium">{article.date}</div>
-                  <h3 className="text-[#071A2F] font-bold text-base leading-snug mb-3 group-hover:text-[#0B3A68] transition-colors" style={{ fontFamily: "Outfit, sans-serif" }}>
+                  <h3 className="text-[#071A2F] font-bold text-lg leading-snug mb-3 group-hover:text-[#0B3A68] transition-colors" style={{ fontFamily: "Outfit, sans-serif" }}>
                     {article.title}
                   </h3>
                   <p className="text-gray-500 text-sm leading-relaxed">{article.excerpt}</p>
-                  <div className="mt-4 flex items-center gap-1 text-[#E7A62B] text-sm font-semibold">
-                    Lire la suite <IconArrow />
-                  </div>
                 </div>
-              </div>
+              </article>
             ))}
           </div>
         </div>
@@ -873,7 +908,7 @@ export default function App() {
               Parlons de votre<br /><span className="text-[#E7A62B]">prochain transport</span>
             </h2>
             <p className="text-white/50 mt-4 max-w-xl mx-auto">
-              Notre équipe est disponible 24h/24 pour répondre à vos demandes et établir un devis personnalisé.
+              Contactez-nous pour présenter votre besoin et demander un devis personnalisé.
             </p>
           </div>
 
@@ -883,7 +918,7 @@ export default function App() {
               {[
                 { icon: <IconPhone />, label: "Téléphone", values: ["0537408484", "+212 661-751726"] },
                 { icon: <IconMail />, label: "Email", values: ["contactwasmia.pro@gmail.com"] },
-                { icon: <IconLocation />, label: "Adresse", values: ["Lot Kassba N° 146 Témara", "Rabat 10000, Maroc"] },
+                { icon: <IconLocation />, label: "Adresse", values: ["Lot Kasbah N° 146 Témara", "Témara, Maroc"] },
                 { icon: <IconClock />, label: "Horaires", values: ["Lun–Ven: 08h–18h", "Sam: 08h–13h | Urgences 24/7"] },
               ].map((info, i) => (
                 <div key={i} className="flex gap-5">
@@ -912,8 +947,8 @@ export default function App() {
                   <div className="w-10 h-10 bg-[#E7A62B] rounded-full flex items-center justify-center mx-auto mb-2" style={{ animation: "pulse-gold 2s infinite" }}>
                     <IconLocation />
                   </div>
-                  <div className="text-white text-sm font-medium">Rabat, Maroc</div>
-                  <div className="text-white/40 text-xs mt-1">Lot Kassba N° 146 Témara</div>
+                  <div className="text-white text-sm font-medium">Témara, Maroc</div>
+                  <div className="text-white/40 text-xs mt-1">Lot Kasbah N° 146 Témara</div>
                 </div>
               </div>
             </div>
@@ -924,7 +959,7 @@ export default function App() {
                 <h3 className="text-2xl font-bold text-white mb-2" style={{ fontFamily: "Outfit, sans-serif" }}>
                   Demander un devis gratuit
                 </h3>
-                <p className="text-white/40 text-sm mb-8">Réponse sous 2 heures ouvrées.</p>
+                <p className="text-white/40 text-sm mb-8">Présentez-nous votre besoin et nous reviendrons vers vous avec les informations adaptées.</p>
 
                 {formSent && (
                   <div className="mb-6 bg-green-500/10 border border-green-500/30 rounded-xl px-5 py-4 flex items-center gap-3 text-green-400">
@@ -1077,7 +1112,7 @@ export default function App() {
               <h4 className="text-white font-bold text-sm mb-5 uppercase tracking-wider" style={{ fontFamily: "Outfit, sans-serif" }}>Contact</h4>
               <ul className="space-y-4">
                 <li className="flex gap-3 text-sm text-white/40">
-                  <IconLocation /> Lot Kassba N° 146 Témara<br />Rabat, Maroc
+                  <IconLocation /> Lot Kasbah N° 146 Témara<br />Témara, Maroc
                 </li>
                 <li className="flex gap-3 text-sm text-white/40 items-center">
                   <IconPhone /> 0537408484
