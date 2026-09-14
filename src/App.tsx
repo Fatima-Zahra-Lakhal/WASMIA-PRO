@@ -916,7 +916,7 @@ export default function App() {
             {/* Contact info */}
             <div className="lg:col-span-2 section-reveal space-y-8">
               {[
-                { icon: <IconPhone />, label: "Téléphone", values: ["0537408484", "+212 661-751726"] },
+                { icon: <IconPhone />, label: "Téléphone", values: ["0537408484", "0627251077"] },
                 { icon: <IconMail />, label: "Email", values: ["contactwasmia.pro@gmail.com"] },
                 { icon: <IconLocation />, label: "Adresse", values: ["Lot Kasbah N° 146 Témara", "Témara, Maroc"] },
                 { icon: <IconClock />, label: "Horaires", values: ["Lun–Ven: 08h–18h", "Sam: 08h–13h | Urgences 24/7"] },
@@ -1115,7 +1115,7 @@ export default function App() {
                   <IconLocation /> Lot Kasbah N° 146 Témara<br />Témara, Maroc
                 </li>
                 <li className="flex gap-3 text-sm text-white/40 items-center">
-                  <IconPhone /> 0537408484
+                  <IconPhone /> 0627251077
                 </li>
                 <li className="flex gap-3 text-sm text-white/40 items-center">
                   <IconMail /> contactwasmia.pro@gmail.com
