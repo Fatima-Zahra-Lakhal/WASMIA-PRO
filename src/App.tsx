@@ -300,29 +300,88 @@ function ServiceCard({ svc }: { svc: { icon: ReactNode; title: string; desc: str
 const Logo = ({ size = "md" }: { size?: "sm" | "md" | "lg" }) => {
   const s = size === "sm" ? 32 : size === "lg" ? 52 : 42;
   return (
-    <div className="flex items-center gap-3">
-      <div
-        style={{ width: s, height: s }}
-        className="relative flex items-center justify-center rounded-lg overflow-hidden flex-shrink-0"
+<div className="flex items-center gap-3">
+  <div
+    style={{ width: s, height: s }}
+    className="relative flex items-center justify-center rounded-lg overflow-hidden flex-shrink-0"
+  >
+    <div className="absolute inset-0 bg-gradient-to-br from-[#E7A62B] to-[#C8901F]" />
+
+    <svg
+      viewBox="0 0 40 40"
+      style={{
+        width: s * 0.7,
+        height: s * 0.7,
+        position: "relative",
+        zIndex: 1,
+      }}
+    >
+      <text
+        x="4"
+        y="29"
+        fontSize="24"
+        fontWeight="900"
+        fontFamily="Outfit,sans-serif"
+        fill="#071A2F"
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-[#E7A62B] to-[#C8901F]" />
-        <svg viewBox="0 0 40 40" style={{ width: s * 0.7, height: s * 0.7, position: "relative", zIndex: 1 }}>
-          <text x="4" y="29" fontSize="24" fontWeight="900" fontFamily="Outfit,sans-serif" fill="#071A2F">W</text>
-          <text x="20" y="29" fontSize="16" fontWeight="700" fontFamily="Outfit,sans-serif" fill="#071A2F">P</text>
-        </svg>
-      </div>
-      <div>
-        <div
-          style={{ fontFamily: "Outfit, sans-serif", fontSize: size === "sm" ? 16 : size === "lg" ? 24 : 20, fontWeight: 800, letterSpacing: 1 }}
-          className="text-white leading-none"
-        >
-          WASMIA-<span className="text-[#E7A62B]">PRO</span>
-        </div>
-        <div style={{ fontFamily: "Outfit, sans-serif", fontSize: 9, letterSpacing: 2, fontWeight: 400 }} className="text-white/50 uppercase mt-0.5">
-          Construction · Transport · Engins
-        </div>
-      </div>
+        W
+      </text>
+      <text
+        x="20"
+        y="29"
+        fontSize="16"
+        fontWeight="700"
+        fontFamily="Outfit,sans-serif"
+        fill="#071A2F"
+      >
+        P
+      </text>
+    </svg>
+  </div>
+
+  <div>
+    <div
+      style={{
+        fontFamily: "Outfit, sans-serif",
+        fontSize: size === "sm" ? 16 : size === "lg" ? 24 : 20,
+        fontWeight: 800,
+        letterSpacing: 1,
+        display: "flex",
+        alignItems: "baseline",
+        gap: 5,
+      }}
+      className="text-white leading-none"
+    >
+      <span>
+        WASMIA-<span className="text-[#E7A62B]">PRO</span>
+      </span>
+
+      <span
+        style={{
+          fontSize: size === "sm" ? 9 : size === "lg" ? 13 : 11,
+          fontWeight: 700,
+          letterSpacing: 1,
+        }}
+        className="text-white/80"
+      >
+        SARL
+      </span>
     </div>
+
+    <div
+      style={{
+        fontFamily: "Outfit, sans-serif",
+        fontSize: 9,
+        letterSpacing: 2,
+        fontWeight: 400,
+      }}
+      className="text-white/50 uppercase mt-0.5"
+    >
+      Construction · Transport · Engins
+    </div>
+  </div>
+</div>
+
   );
 };
 
